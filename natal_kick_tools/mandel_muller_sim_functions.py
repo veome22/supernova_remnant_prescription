@@ -3,9 +3,10 @@ import numpy as np
 from scipy import interpolate
 import glob
 import time
+import os
 
 def load_sim_data(bh_kicks=[200], ns_kicks=[200, 400, 800], sigmas = [0.01, 0.3, 0.7]):  
-                
+               
     SN_KICK_BH_ALL = []
     SN_KICK_NS_ALL = []
     NS_KICK_MULT = []
@@ -104,7 +105,7 @@ def p_vi_from_model(vt, model):
     return p_vi_M
 
 
-def get_pulsar_probability(pulsar_data_loc, bh_kick=200, ns_kick=400, sigma=0.3):
+def get_pulsar_probability(pulsar_data_loc, bh_kick=200, ns_kick=400, sigma=0.3, local=False):
     '''
     This function takes in a specific Muller Mandel prescription and calculates the probability of drawing a set of pulsars from it.
     Arguments:
@@ -115,7 +116,11 @@ def get_pulsar_probability(pulsar_data_loc, bh_kick=200, ns_kick=400, sigma=0.3)
     '''
     
     # Read in the model kicks 
-    SN_KICKS_NS, SN_KICKS_BH, NS_KICK_MULT, SIGMAS = load_local_sim_data(bh_kicks=[bh_kick], ns_kicks=[ns_kick], sigmas=[sigma])
+    if local:
+        SN_KICKS_NS, SN_KICKS_BH, NS_KICK_MULT, SIGMAS = load_local_sim_data(bh_kicks=[bh_kick], ns_kicks=[ns_kick], sigmas=[sigma])
+    else:
+        SN_KICKS_NS, SN_KICKS_BH, NS_KICK_MULT, SIGMAS = load_sim_data(bh_kicks=[bh_kick], ns_kicks=[ns_kick], sigmas=[sigma])
+        
     model_data = SN_KICKS_NS
     
     # Read in the posteriors
@@ -150,7 +155,7 @@ def get_pulsar_probability(pulsar_data_loc, bh_kick=200, ns_kick=400, sigma=0.3)
         p_di_M[i] = np.average(p_vi_M_all[i])
                        
     # Save probabilities of drawing each pulsar given the model
-    fname = f"../calculatedModelLikelihoods/v_ns_{ns_kick}_sigma_{sigma}"
+    fname = f"../calculatedModelLikelihoods/vns_{ns_kick}_sigma_{sigma}"
     print(f"Writing pulsar probabilities to file: {fname}")
     np.savetxt(fname, p_di_M)
                        
