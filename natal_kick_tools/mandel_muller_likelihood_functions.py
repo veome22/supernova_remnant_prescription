@@ -158,7 +158,7 @@ def get_pulsar_probability(pulsar_data_loc, bh_kicks=[200], ns_kicks=[400], sigm
 
 
         # Save probabilities of drawing each pulsar given the model
-        fname = f"../calculatedModelLikelihoods/vns_{NS_KICK_MULT[k]}_sigma_{SIGMAS[k]}"
+        fname = f"calculatedModelLikelihoods/vns_{NS_KICK_MULT[k]}_sigma_{SIGMAS[k]}"
         print(f"Writing pulsar probabilities to file: {fname}")
         np.savetxt(fname, p_di_M)
 
