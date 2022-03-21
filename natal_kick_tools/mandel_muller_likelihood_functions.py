@@ -134,9 +134,12 @@ def get_pulsar_probability(pulsar_data_loc, bh_kicks=[200], ns_kicks=[400], sigm
     likelihoods = np.empty(len(SN_KICKS_NS)) # array to store combined likelihoods for all models
     
     for k in range(len(SN_KICKS_NS)):       
-        model_data = SN_KICKS_NS[k]
+        model_data_3d = SN_KICKS_NS[k]
         
-        model_data = get_projected_velocity(model_data)
+        model_data = get_projected_velocity(model_data_3d)
+        
+        # Save the original ns velocities and the velocity projections for future analysis
+        save_velocities(k, model_data_3d, model_data, NS_KICK_MULT, SIGMAS)
 
         start = time.time() 
         
@@ -171,7 +174,14 @@ def get_pulsar_probability(pulsar_data_loc, bh_kicks=[200], ns_kicks=[400], sigm
     return likelihoods
 
 
-
+def save_velocities(k, model_data_3d, model_data, NS_KICK_MULT, SIGMAS):
+    fname = f"vns_{NS_KICK_MULT[k]}_sigma_{SIGMAS[k]}_velocities"
+    if not os.path.exists('model_velocities'):
+        os.makedirs('model_velocities')
+    np.savetxt("model_velocities/"+fname, np.c_[model_data_3d, model_data], header="3D Velocities \t Projected 2D Velocities")
+    return
+    
+    
 def get_projected_velocity(model_velocities):
     # Project onto a plane with isotropically distributed orientation.
     # Only need to project wrt theta, since phi orientation doesn't matter for a transverse velocity
