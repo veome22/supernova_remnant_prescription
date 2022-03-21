@@ -107,7 +107,7 @@ def p_vi_from_model(vt, model):
 
 def get_pulsar_probability(pulsar_data_loc, bh_kicks=[200], ns_kicks=[400], sigmas=[0.3], local=False):
     '''
-    This function takes in a range of Muller Mandel prescriptions and calculates the probability of drawing a given set of pulsars from them.
+    This is the MAIN function that takes in a range of Muller Mandel prescriptions and calculates the probability of drawing a given set of pulsars from them.
     
     Arguments:
     pulsar_data_loc:    The folder which contains the pulsar posterior data
@@ -135,6 +135,8 @@ def get_pulsar_probability(pulsar_data_loc, bh_kicks=[200], ns_kicks=[400], sigm
     
     for k in range(len(SN_KICKS_NS)):       
         model_data = SN_KICKS_NS[k]
+        
+        model_data = get_projected_velocity(model_data)
 
         start = time.time() 
         
@@ -170,4 +172,12 @@ def get_pulsar_probability(pulsar_data_loc, bh_kicks=[200], ns_kicks=[400], sigm
 
 
 
-
+def get_projected_velocity(model_velocities):
+    # Project onto a plane with isotropically distributed orientation.
+    # Only need to project wrt theta, since phi orientation doesn't matter for a transverse velocity
+    
+    theta = np.random.rand(len(model_velocities))*2*np.pi
+    transverse_velocities = np.abs(model_velocities*np.sin(theta))
+    
+    return transverse_velocities
+    
