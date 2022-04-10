@@ -185,9 +185,10 @@ def save_velocities(k, model_data_3d, model_data, NS_KICK_MULT, SIGMAS):
 def get_projected_velocity(model_velocities):
     # Project onto a plane with isotropically distributed orientation.
     # Only need to project wrt theta, since phi orientation doesn't matter for a transverse velocity
+    # So v_transverse = sqrt(1-(cos^2(theta)) where cos(theta) = uniform(0,1)
     
-    theta = np.random.rand(len(model_velocities))*2*np.pi
-    transverse_velocities = np.abs(model_velocities*np.sin(theta))
+    cosTheta = np.random.uniform(0,1,len(model_velocities))
+    transverse_velocities = np.abs(model_velocities * np.sqrt(1 - cosTheta**2))
     
     return transverse_velocities
     
