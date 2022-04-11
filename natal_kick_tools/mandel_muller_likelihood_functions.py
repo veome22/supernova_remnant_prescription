@@ -119,12 +119,22 @@ def get_pulsar_probability(pulsar_data_loc, bh_kicks=[200], ns_kicks=[400], sigm
                         
     '''
     
-    # Read in the model kicks 
-    if local:
-        SN_KICKS_NS, SN_KICKS_BH, NS_KICK_MULT, SIGMAS = load_local_sim_data(bh_kicks=bh_kicks, ns_kicks=ns_kicks, sigmas=sigmas)
-    else:
-        SN_KICKS_NS, SN_KICKS_BH, NS_KICK_MULT, SIGMAS = load_sim_data(bh_kicks=bh_kicks, ns_kicks=ns_kicks, sigmas=sigmas)
-        
+#     # Read in the model kicks 
+    SN_KICKS_NS = []
+    NS_KICK_MULT = []
+    SIGMAS = []
+    
+    for bh_kick in bh_kicks:
+        for ns_kick in ns_kicks:
+            for sigma in sigmas:
+                fname = f"vns_{ns_kick}_sigma_{sigma}_velocities"
+                path = 'model_velocities/' + fname
+                print("Loading projected model data from", path)  
+                SN_KICKS_NS.append(np.loadtxt(path, unpack=True, usecols=1))
+                NS_KICK_MULT.append(ns_kick)
+                SIGMAS.append(sigma)
+    
+                
     # Read in the posteriors
     vt_all = []
     for file in glob.glob(f'{pulsar_data_loc}/*.bootstraps'):
@@ -134,12 +144,8 @@ def get_pulsar_probability(pulsar_data_loc, bh_kicks=[200], ns_kicks=[400], sigm
     likelihoods = np.empty(len(SN_KICKS_NS)) # array to store combined likelihoods for all models
     
     for k in range(len(SN_KICKS_NS)):       
-        model_data_3d = SN_KICKS_NS[k]
-        
-        model_data = get_projected_velocity(model_data_3d)
-        
-        # Save the original ns velocities and the velocity projections for future analysis
-        save_velocities(k, model_data_3d, model_data, NS_KICK_MULT, SIGMAS)
+
+        model_data = SN_KICKS_NS[k]
 
         start = time.time() 
         
@@ -173,12 +179,26 @@ def get_pulsar_probability(pulsar_data_loc, bh_kicks=[200], ns_kicks=[400], sigm
         
     return likelihoods
 
-
+def v3d_to_v2d(bh_kicks=[200], ns_kicks=[400], sigmas=[0.3], local=False):
+    # Read in the model kicks 
+    if local:
+        SN_KICKS_NS, SN_KICKS_BH, NS_KICK_MULT, SIGMAS = load_local_sim_data(bh_kicks=bh_kicks, ns_kicks=ns_kicks, sigmas=sigmas)
+    else:
+        SN_KICKS_NS, SN_KICKS_BH, NS_KICK_MULT, SIGMAS = load_sim_data(bh_kicks=bh_kicks, ns_kicks=ns_kicks, sigmas=sigmas)
+        
+    for k in range(len(SN_KICKS_NS)):       
+        model_data_3d = SN_KICKS_NS[k]     
+        # Save the original ns velocities and the velocity projections for future analysis
+        save_velocities(k, model_data_3d, model_data, NS_KICK_MULT, SIGMAS)
+        return
+    
+    
 def save_velocities(k, model_data_3d, model_data, NS_KICK_MULT, SIGMAS):
     fname = f"vns_{NS_KICK_MULT[k]}_sigma_{SIGMAS[k]}_velocities"
     if not os.path.exists('model_velocities'):
         os.makedirs('model_velocities')
     np.savetxt("model_velocities/"+fname, np.c_[model_data_3d, model_data], header="3D Velocities \t Projected 2D Velocities")
+    print("Succesfully saved 2D projected velocity in", fname)
     return
     
     
