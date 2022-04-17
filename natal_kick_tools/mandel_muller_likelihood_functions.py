@@ -187,10 +187,11 @@ def v3d_to_v2d(bh_kicks=[200], ns_kicks=[400], sigmas=[0.3], local=False):
         SN_KICKS_NS, SN_KICKS_BH, NS_KICK_MULT, SIGMAS = load_sim_data(bh_kicks=bh_kicks, ns_kicks=ns_kicks, sigmas=sigmas)
         
     for k in range(len(SN_KICKS_NS)):       
-        model_data_3d = SN_KICKS_NS[k]     
+        model_data_3d = SN_KICKS_NS[k]  
+        model_data = get_projected_velocity(model_data_3d)
         # Save the original ns velocities and the velocity projections for future analysis
         save_velocities(k, model_data_3d, model_data, NS_KICK_MULT, SIGMAS)
-        return
+    return
     
     
 def save_velocities(k, model_data_3d, model_data, NS_KICK_MULT, SIGMAS):
