@@ -5,7 +5,8 @@ import glob
 import time
 import os
 
-def load_sim_data(bh_kicks=[200], ns_kicks=[200, 400, 800], sigmas = [0.01, 0.3, 0.7]):  
+def load_sim_data(bh_kicks=[200], ns_kicks=[300, 400, 700], sigmas = [0.1, 0.3, 0.5], \
+                  workdir = os.environ['WORK'] + f'/supernova_remnant_production'):  
                
     SN_KICK_BH_ALL = []
     SN_KICK_NS_ALL = []
@@ -15,7 +16,7 @@ def load_sim_data(bh_kicks=[200], ns_kicks=[200, 400, 800], sigmas = [0.01, 0.3,
     for bh_kick in bh_kicks:
         for ns_kick in ns_kicks:
             for sigma in sigmas:
-                path = os.environ['WORK'] + f'/supernova_remnant/bh_{bh_kick}_ns_{ns_kick}_sigma_{sigma}_combined.h5'
+                path = workdir + f'/bh_{bh_kick}_ns_{ns_kick}_sigma_{sigma}_combined.h5'
                 print("Loading Mandel Muller model data from", path)
             
                 fdata = h5.File(path, 'r')
