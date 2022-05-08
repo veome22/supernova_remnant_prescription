@@ -75,7 +75,7 @@ def plot_model_pdf(vt_all, NS_KICKS_2D, NS_KICK_MULT, SIGMAS, \
 def plot_posterior_pdf(vt_all, NS_KICKS_2D, NS_KICK_MULT, SIGMAS, \
                        color='b', n_bins=10):
     vt_draw, bins, cdf, pdf = draw_posterior_cdf(vt_all, n_bins=n_bins)
-    plt.plot(bins, pdf, color=color, label='Posterior CDF')
+    plt.plot(bins, pdf, color=color, label='Posterior PDF')
     return
         
 
