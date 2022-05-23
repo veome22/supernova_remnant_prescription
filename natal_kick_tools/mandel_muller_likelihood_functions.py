@@ -6,7 +6,7 @@ import time
 import os
 
 def load_sim_data(bh_kicks=[200], ns_kicks=[300, 400, 700], sigmas = [0.1, 0.3, 0.5], mode='sse', \
-                  work_dir = os.environ['WORK'] + f'/supernova_remnant_production'):  
+                  work_dir = ''):  
                
     SN_KICK_BH_ALL = []
     SN_KICK_NS_ALL = []
@@ -193,7 +193,7 @@ def get_pulsar_probability(pulsar_data_dir, model_data_dir='model_velocities', \
     return likelihoods
 
 def v3d_to_v2d(bh_kicks=[200], ns_kicks=[400], sigmas=[0.3], mode='sse',\
-                  work_dir = os.environ['WORK'] + f'/supernova_remnant_production', output_dir='model_velocities'):
+                  work_dir = '', output_dir='model_velocities'):
     
     # Read in the model kicks 
     SN_KICKS_NS, SN_KICKS_BH, NS_KICK_MULT, SIGMAS = load_sim_data(bh_kicks=bh_kicks, ns_kicks=ns_kicks, sigmas=sigmas, mode=mode, work_dir=work_dir)
