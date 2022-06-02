@@ -64,7 +64,7 @@ def plot_model_cdf(vt_all, NS_KICKS_2D, NS_KICK_MULT, SIGMAS, \
         plt.plot(bins, cdf, color=color, alpha=alpha)
         
     plt.plot(bins, cdf, color=color, alpha=alpha, \
-             label=f'v_ns={NS_KICK_MULT[PLOT_INDEX]}, sigma={SIGMAS[PLOT_INDEX]}, ({len(vt_draw)} data points)')
+             label=f'v_ns={NS_KICK_MULT[PLOT_INDEX]}, sigma={SIGMAS[PLOT_INDEX]}')
     return
     
     
@@ -75,7 +75,7 @@ def plot_posterior_cdf(vt_all, NS_KICKS_2D, NS_KICK_MULT, SIGMAS, \
         vt_draw, bins, cdf, pdf = draw_posterior_cdf(vt_all, n_bins=n_bins, n_draws=n_draws)
         plt.plot(bins, cdf, color=color, alpha=alpha)
         
-    plt.plot(bins, cdf, color=color, alpha=alpha, label=f'Pulsar Posterior ({len(vt_draw)} data points)')
+    plt.plot(bins, cdf, color=color, alpha=alpha, label=f'Pulsar Posterior')
     return
     
     
@@ -83,13 +83,13 @@ def plot_model_pdf(vt_all, NS_KICKS_2D, NS_KICK_MULT, SIGMAS, \
                    PLOT_INDEX=0, color='b', n_bins=10, n_draws=300):
     vt_draw, bins, cdf, pdf = draw_model_cdf(NS_KICKS_2D[PLOT_INDEX], vt_all, n_bins=n_bins, n_draws=n_draws)
     plt.plot(bins, pdf, color=color, \
-             label=f'v_ns={NS_KICK_MULT[PLOT_INDEX]}, sigma={SIGMAS[PLOT_INDEX]}, ({len(vt_draw)} data points)')
+             label=f'v_ns={NS_KICK_MULT[PLOT_INDEX]}, sigma={SIGMAS[PLOT_INDEX]}')
     return
     
 def plot_posterior_pdf(vt_all, NS_KICKS_2D, NS_KICK_MULT, SIGMAS, \
                        color='b', n_bins=10, n_draws=89):
     vt_draw, bins, cdf, pdf = draw_posterior_cdf(vt_all, n_bins=n_bins, n_draws=n_draws)
-    plt.plot(bins, pdf, color=color, label=f'Pulsar Posterior ({len(vt_draw)} data points)')
+    plt.plot(bins, pdf, color=color, label=f'Pulsar Posterior')
     return
         
 
@@ -134,7 +134,7 @@ def plot_avg_model_cdf(vt_all, NS_KICKS_2D, NS_KICK_MULT, SIGMAS, \
                                                         n_cdf, PLOT_INDEX, n_bins=n_bins, n_draws=n_draws)
     
     plt.plot(bins, cdf_med, color=color, \
-             label=f'v_ns={NS_KICK_MULT[PLOT_INDEX]}, sigma={SIGMAS[PLOT_INDEX]} ({draws} data points)')
+             label=f'v_ns={NS_KICK_MULT[PLOT_INDEX]}, sigma={SIGMAS[PLOT_INDEX]}')
     plt.fill_between(bins, cdf_min, cdf_max, color=color, alpha=alpha)
     
     return
@@ -146,7 +146,7 @@ def plot_avg_posterior_cdf(vt_all, NS_KICKS_2D, NS_KICK_MULT, SIGMAS, \
     bins, cdf_med, cdf_min, cdf_max, draws = get_avg_posterior_cdf(vt_all, NS_KICKS_2D, NS_KICK_MULT, SIGMAS, \
                                                             n_cdf, n_bins=n_bins, n_draws=n_draws)    
     
-    plt.plot(bins, cdf_med, color=color, label=f'Pulsar Posterior ({draws} data points)')
+    plt.plot(bins, cdf_med, color=color, label=f'Pulsar Posterior')
     plt.fill_between(bins, cdf_min, cdf_max, color=color, alpha=alpha)
     
     return
