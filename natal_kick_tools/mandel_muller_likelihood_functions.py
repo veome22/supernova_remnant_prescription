@@ -179,12 +179,13 @@ def get_pulsar_probability(pulsar_data_dir, model_data_dir='model_velocities', \
 
 
         # Save probabilities of drawing each pulsar given the model
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
-        
-        fname = f"{output_dir}/vns_{NS_KICK_MULT[k]}_sigma_{SIGMAS[k]}"
-        print(f"Writing pulsar probabilities to file: {fname}")
-        np.savetxt(fname, p_di_M)
+        if output_dir is not None:
+            if not os.path.exists(output_dir):
+                os.makedirs(output_dir)
+
+            fname = f"{output_dir}/vns_{NS_KICK_MULT[k]}_sigma_{SIGMAS[k]}"
+            print(f"Writing pulsar probabilities to file: {fname}")
+            np.savetxt(fname, p_di_M)
 
         likelihoods[k] = np.prod(p_di_M)
         print("Calculation Complete!")
