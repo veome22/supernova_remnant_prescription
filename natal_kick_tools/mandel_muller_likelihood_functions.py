@@ -21,22 +21,37 @@ def load_sim_data(bh_kicks=[200], ns_kicks=[300, 400, 700], sigmas = [0.1, 0.3, 
                 print("Loading Mandel Muller model data from", path)
             
                 fdata = h5.File(path, 'r')
+                
                 if mode == 'sse':
                     key = 'SSE_Supernovae'
                     suffix = ''
+                    SN_KICK = fdata[key]["Applied_Kick_Magnitude"][...].squeeze()
+                    SN_STELLAR_TYPE = fdata[key][f"Stellar_Type{suffix}"][...].squeeze()
+                    SN_TYPE = fdata[key][f"SN_Type{suffix}"][...].squeeze() 
+                    
+                    maskSN_NS = ((SN_STELLAR_TYPE ==13) * (SN_TYPE == 1)) # select NSs, ignore electron capture SN
+                    maskSN_BH = ((SN_STELLAR_TYPE ==14) * (SN_TYPE == 1)) # select BHs, ignore electron capture SN
+                    
+               
+            
                 if mode == 'bse':
                     key = 'BSE_Supernovae'
                     suffix = '(SN)'
+                    SN_STELLAR_TYPE = fdata[key][f"Stellar_Type{suffix}"][...].squeeze()
+                    SN_TYPE = fdata[key][f"SN_Type{suffix}"][...].squeeze() 
+                    SN_KICK = fdata[key]["ComponentSpeed(SN)"][...].squeeze()
                     
-                SN_STELLAR_TYPE = fdata[key][f"Stellar_Type{suffix}"][...].squeeze()
-                SN_TYPE = fdata[key][f"SN_Type{suffix}"][...].squeeze() 
-                SN_KICK = fdata[key][f"Applied_Kick_Magnitude{suffix}"][...].squeeze()
-
-                maskSN_NS = ((SN_STELLAR_TYPE ==13) * (SN_TYPE == 1)) # select NSs, ignore electron capture SN
-                maskSN_BH = ((SN_STELLAR_TYPE ==14) * (SN_TYPE == 1)) # select BHs, ignore electron capture SN
-
+                    UNBOUND  = fdata['BSE_Supernovae']["Unbound"][...].squeeze() 
+                    
+                    # select unbound NSs, ignore electron capture SN
+                    maskSN_NS = ((SN_STELLAR_TYPE ==13) * (SN_TYPE == 1) * (UNBOUND == 1)) 
+                    
+                    # select unbound BHs, ignore electron capture SN
+                    maskSN_BH = ((SN_STELLAR_TYPE ==14) * (SN_TYPE == 1) * (UNBOUND == 1)) 
+                    
                 SN_KICK_NS = SN_KICK[maskSN_NS]
                 SN_KICK_BH = SN_KICK[maskSN_BH] 
+                         
 
                 fdata.close()
 
