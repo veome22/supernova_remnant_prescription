@@ -103,9 +103,9 @@ def get_avg_model_cdf(vt_all, NS_KICKS_2D, NS_KICK_MULT, SIGMAS, \
         cdf_all[i] = cdf
         
     cdf_med = np.median(cdf_all, axis=0)
-    sig = np.std(cdf_all, axis=0)
-    cdf_min = cdf_med - sig
-    cdf_max = cdf_med + sig
+    
+    cdf_min = np.percentile(cdf_all, 5, axis=0)
+    cdf_max = np.percentile(cdf_all, 95, axis=0)
     
     return bins, cdf_med, cdf_min, cdf_max, len(vt_draw)
 
@@ -120,9 +120,8 @@ def get_avg_posterior_cdf(vt_all, NS_KICKS_2D, NS_KICK_MULT, SIGMAS, \
         cdf_all[i] = cdf
         
     cdf_med = np.median(cdf_all, axis=0)
-    sig = np.std(cdf_all, axis=0)
-    cdf_min = cdf_med - sig
-    cdf_max = cdf_med + sig
+    cdf_min = np.percentile(cdf_all, 5, axis=0)
+    cdf_max = np.percentile(cdf_all, 95, axis=0)
     
     return bins, cdf_med, cdf_min, cdf_max, len(vt_draw)
 
