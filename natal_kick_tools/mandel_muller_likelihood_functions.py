@@ -63,47 +63,6 @@ def load_sim_data(bh_kicks=[200], ns_kicks=[300, 400, 700], sigmas = [0.1, 0.3, 
     return SN_KICK_NS_ALL, SN_KICK_BH_ALL, NS_KICK_MULT, SIGMAS
 
 
-# def load_local_sim_data(bh_kicks=[200], ns_kicks=[400], sigmas = [0.3]):  
-#     paths = []
-    
-#     for bh_kick in bh_kicks:
-#         for ns_kick in ns_kicks:
-#             for sigma in sigmas:
-#                 path = f'../COMPAS_runs/bh_{bh_kick}_ns_{ns_kick}_sigma_{sigma}_combined.h5'
-#                 paths.append(path)
-            
-#     SN_KICK_BH_ALL = []
-#     SN_KICK_NS_ALL = []
-#     NS_KICK_MULT = []
-#     SIGMAS = []
-       
-    
-#     for ns_kick in ns_kicks:
-#         for sigma in sigmas:
-#             path = f'../COMPAS_runs/bh_{bh_kick}_ns_{ns_kick}_sigma_{sigma}_combined.h5'
-#             print("Loading Mandel Muller model data from", path)
-            
-#             fdata = h5.File(path, 'r')
-            
-#             SN_STELLAR_TYPE = fdata['SSE_Supernovae']["Stellar_Type"][...].squeeze()
-#             SN_TYPE = fdata['SSE_Supernovae']["SN_Type"][...].squeeze() 
-#             SN_KICK = fdata['SSE_Supernovae']["Applied_Kick_Magnitude"][...].squeeze()
-
-#             maskSN_NS = ((SN_STELLAR_TYPE ==13) * (SN_TYPE == 1)) # select NSs, ignore electron capture SN
-#             maskSN_BH = ((SN_STELLAR_TYPE ==14) * (SN_TYPE == 1)) # select BHs, ignore electron capture SN
-            
-#             SN_KICK_NS = SN_KICK[maskSN_NS]
-#             SN_KICK_BH = SN_KICK[maskSN_BH] 
-
-#             fdata.close()
-            
-#             SN_KICK_NS_ALL.append(SN_KICK_NS)
-#             SN_KICK_BH_ALL.append(SN_KICK_BH)
-#             NS_KICK_MULT.append(ns_kick)
-#             SIGMAS.append(sigma)
-            
-#     return SN_KICK_NS_ALL, SN_KICK_BH_ALL, NS_KICK_MULT, SIGMAS
-
 def p_vi_from_model(vt, model):
     '''
     Arguments:
