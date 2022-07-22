@@ -66,6 +66,33 @@ def plot_model_cdf(vt_all, NS_KICKS_2D, NS_KICK_MULT, SIGMAS, \
     plt.plot(bins, cdf, color=color, alpha=alpha, lw=lw,\
              label=label)
     return
+
+
+def plot_model_cdf_no_bins(vt_all, NS_KICKS_2D, NS_KICK_MULT, SIGMAS, n_cdf=100, PLOT_INDEX=0, n_draws=81, label='cdf', color='C0', *args, **kwargs):    
+    for i in range(n_cdf):
+        data = np.random.choice(NS_KICKS_2D[PLOT_INDEX], n_draws)
+        data_sorted = np.sort(data)
+        # calculate the proportional values of samples
+        p = 1. * np.arange(len(data)) / (len(data) - 1)
+        plt.plot(data_sorted, p, color=color, *args, **kwargs)
+    
+    plt.plot(data_sorted, p, label=label, alpha=0, color=color)   
+    return
+
+
+def plot_pulsar_cdf_no_bins(vt_all, NS_KICKS_2D, NS_KICK_MULT, SIGMAS, n_cdf=100, n_draws=81, label='cdf', color='r',  *args, **kwargs):    
+    for i in range(n_cdf):
+        data = np.zeros(len(vt_all))        
+        for i in range(len(data)):
+            data[i] = vt_all[i][np.random.randint(len(vt_all[i]))]
+            
+        data_sorted = np.sort(data)
+        # calculate the proportional values of samples
+        p = 1. * np.arange(len(data)) / (len(data) - 1)
+        plt.plot(data_sorted, p, color=color, *args, **kwargs)
+    
+    plt.plot(data_sorted, p, label=label, alpha=0, color=color)   
+    return
     
     
     
