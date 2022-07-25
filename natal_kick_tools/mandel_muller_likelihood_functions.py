@@ -8,7 +8,6 @@ import os
 def load_sim_data(bh_kicks=[200], ns_kicks=[300, 400, 700], sigmas = [0.1, 0.3, 0.5], mode='sse', \
                   work_dir = ''):  
                
-    SN_KICK_BH_ALL = []
     SN_KICK_NS_ALL = []
     NS_KICK_MULT = []
     SIGMAS = []
@@ -23,44 +22,42 @@ def load_sim_data(bh_kicks=[200], ns_kicks=[300, 400, 700], sigmas = [0.1, 0.3, 
                 fdata = h5.File(path, 'r')
                 
                 if mode == 'sse':
-                    key = 'SSE_Supernovae'
-                    suffix = ''
-                    SN_KICK = fdata[key]["Applied_Kick_Magnitude"][...].squeeze()
-                    SN_STELLAR_TYPE = fdata[key][f"Stellar_Type{suffix}"][...].squeeze()
-                    SN_TYPE = fdata[key][f"SN_Type{suffix}"][...].squeeze() 
+                    SN_KICK = fdata['SSE_Supernovae']["Applied_Kick_Magnitude"][...].squeeze()
+                    SN_STELLAR_TYPE = fdata['SSE_Supernovae'][f"Stellar_Type"][...].squeeze()
+                    SN_TYPE = fdata['SSE_Supernovae'][f"SN_Type"][...].squeeze() 
                     
-                    maskSN_NS = ((SN_STELLAR_TYPE ==13) * (SN_TYPE == 1)) # select NSs, ignore electron capture SN
-                    maskSN_BH = ((SN_STELLAR_TYPE ==14) * (SN_TYPE == 1)) # select BHs, ignore electron capture SN
-                    
+                    maskSN_NS = ((SN_STELLAR_TYPE ==13) * (SN_TYPE == 1)) # select NSs, Core Collapse SN                 
                
             
                 if mode == 'bse':
-                    key = 'BSE_Supernovae'
-                    suffix = '(SN)'
-                    SN_STELLAR_TYPE = fdata[key][f"Stellar_Type{suffix}"][...].squeeze()
-                    SN_TYPE = fdata[key][f"SN_Type{suffix}"][...].squeeze() 
-                    SN_KICK = fdata[key]["ComponentSpeed(SN)"][...].squeeze()
-                    
+                    SN_STELLAR_TYPE = fdata['BSE_Supernovae']["Stellar_Type(SN)"][...].squeeze()
+                    SN_TYPE = fdata['BSE_Supernovae']["SN_Type(SN)"][...].squeeze() 
                     UNBOUND  = fdata['BSE_Supernovae']["Unbound"][...].squeeze() 
+                    # SN_KICK = fdata['BSE_Supernovae']['Applied_Kick_Magnitude(SN)'][...].squeeze()
+                    SN_KICK = fdata['BSE_Supernovae']['ComponentSpeed(SN)'][...].squeeze()
+
+                    # Fix for selecting only ECSN that have undergone mass transfer as donors, and are thus H-poor
+                    MT_DONOR_HIST = fdata['BSE_Supernovae']["MT_Donor_Hist(SN)"][...].squeeze()
+                    MT_DONOR_HIST = list(map(lambda x: x.decode('utf-8'), MT_DONOR_HIST))
                     
-                    # select unbound NSs, ignore electron capture SN
-                    maskSN_NS = ((SN_STELLAR_TYPE ==13) * (SN_TYPE == 1) * (UNBOUND == 1)) 
+                    MT_DONOR_mask = np.full(len(MT_DONOR_HIST), True, dtype="bool") #include SN by default
+                    for i in range(len(MT_DONOR_HIST)):
+                        if SN_TYPE[i]==2: # only apply cut to ECSN
+                            MT_DONOR_mask[i] = bool("NA" not in MT_DONOR_HIST[i])
+                     
+                    # Select single NS with additional ECSN H-poor constraint
+                    maskSN_NS = ((SN_STELLAR_TYPE ==13) * (MT_DONOR_mask) * (UNBOUND == 1)) 
                     
-                    # select unbound BHs, ignore electron capture SN
-                    maskSN_BH = ((SN_STELLAR_TYPE ==14) * (SN_TYPE == 1) * (UNBOUND == 1)) 
                     
-                SN_KICK_NS = SN_KICK[maskSN_NS]
-                SN_KICK_BH = SN_KICK[maskSN_BH] 
-                         
+                SN_KICK_NS = SN_KICK[maskSN_NS]  
 
                 fdata.close()
 
                 SN_KICK_NS_ALL.append(SN_KICK_NS)
-                SN_KICK_BH_ALL.append(SN_KICK_BH)
                 NS_KICK_MULT.append(ns_kick)
                 SIGMAS.append(sigma)
             
-    return SN_KICK_NS_ALL, SN_KICK_BH_ALL, NS_KICK_MULT, SIGMAS
+    return SN_KICK_NS_ALL, NS_KICK_MULT, SIGMAS
 
 
 def p_vi_from_model(vt, model):
@@ -171,7 +168,7 @@ def v3d_to_v2d(bh_kicks=[200], ns_kicks=[400], sigmas=[0.3], mode='sse',\
                   work_dir = '', output_dir='model_velocities'):
     
     # Read in the model kicks 
-    SN_KICKS_NS, SN_KICKS_BH, NS_KICK_MULT, SIGMAS = load_sim_data(bh_kicks=bh_kicks, ns_kicks=ns_kicks, sigmas=sigmas, mode=mode, work_dir=work_dir)
+    SN_KICKS_NS, NS_KICK_MULT, SIGMAS = load_sim_data(bh_kicks=bh_kicks, ns_kicks=ns_kicks, sigmas=sigmas, mode=mode, work_dir=work_dir)
         
     for k in range(len(SN_KICKS_NS)):       
         model_data_3d = SN_KICKS_NS[k]  
