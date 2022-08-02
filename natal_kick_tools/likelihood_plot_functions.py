@@ -79,6 +79,24 @@ def plot_model_cdf_no_bins(vt_all, NS_KICKS_2D, NS_KICK_MULT, SIGMAS, n_cdf=100,
     plt.plot(data_sorted, p, label=label, alpha=0, color=color)   
     return
 
+def plot_median_model_cdf_no_bins(vt_all, NS_KICKS_2D, NS_KICK_MULT, SIGMAS, n_cdf=100, PLOT_INDEX=0, n_draws=81, label='cdf', color='C0', lw_med=3, *args, **kwargs):    
+    
+    p_all = np.zeros((n_cdf, len(vt_all)))
+    data_all = np.zeros((n_cdf, len(vt_all)))
+
+    for n in range(n_cdf):
+        data = np.random.choice(NS_KICKS_2D[PLOT_INDEX], n_draws)
+        data_all[n] = np.sort(data)
+        # calculate the proportional values of samples
+        p_all[n] = 1. * np.arange(len(data)) / (len(data) - 1)
+
+        plt.plot(data_all[n], p_all[n], color=color, *args, **kwargs)
+
+    median_data = np.median(data_all, axis=0)
+    median_p = np.median(p_all, axis=0)
+    plt.plot(median_data, median_p, label=label, color=color, alpha=1, lw=lw_med)
+    return
+
 
 def plot_pulsar_cdf_no_bins(vt_all, NS_KICKS_2D, NS_KICK_MULT, SIGMAS, n_cdf=100, n_draws=81, label='cdf', color='r',  *args, **kwargs):    
     for i in range(n_cdf):
@@ -90,12 +108,33 @@ def plot_pulsar_cdf_no_bins(vt_all, NS_KICKS_2D, NS_KICK_MULT, SIGMAS, n_cdf=100
         # calculate the proportional values of samples
         p = 1. * np.arange(len(data)) / (len(data) - 1)
         plt.plot(data_sorted, p, color=color, *args, **kwargs)
-    
+        
+    # plot main cdf for label
     plt.plot(data_sorted, p, label=label, alpha=0, color=color)   
     return
     
+def plot_median_pulsar_cdf_no_bins(vt_all, NS_KICKS_2D, NS_KICK_MULT, SIGMAS, n_cdf=100, n_draws=81, label='cdf', color='r', lw_med=3,  *args, **kwargs):    
     
-    
+    p_all = np.zeros((n_cdf, len(vt_all)))
+    data_all = np.zeros((n_cdf, len(vt_all)))
+
+    for n in range(n_cdf):
+        data = np.zeros(len(vt_all)) 
+        for i in range(len(data)):
+            data[i] = vt_all[i][np.random.randint(len(vt_all[i]))]
+
+        data_all[n] = np.sort(data)
+        # calculate the proportional values of samples
+        p_all[n] =  1. * np.arange(len(data)) / (len(data) - 1)
+
+        plt.plot(data_all[n], p_all[n], color=color, *args, **kwargs)
+
+    median_data = np.median(data_all, axis=0)
+    median_p = np.median(p_all, axis=0)
+    plt.plot(median_data, median_p, label=label, color=color, alpha=1, lw=lw_med)
+    return
+
+
 def plot_posterior_cdf(vt_all, NS_KICKS_2D, NS_KICK_MULT, SIGMAS, \
                        n_cdf=100, color='b', alpha=0.1, n_bins=10, n_draws=89, lw = 2, label="Pulsar Data"):
     for i in range(n_cdf):
