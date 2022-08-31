@@ -31,10 +31,13 @@ def load_sim_data(bh_kicks=[200], ns_kicks=[300, 400, 700], sigmas = [0.1, 0.3, 
             
                 if mode == 'bse':
                     SN_STELLAR_TYPE = fdata['BSE_Supernovae']["Stellar_Type(SN)"][...].squeeze()
+                    CP_STELLAR_TYPE = fdata['BSE_Supernovae']["Stellar_Type(CP)"][...].squeeze()
+
                     SN_TYPE = fdata['BSE_Supernovae']["SN_Type(SN)"][...].squeeze() 
                     UNBOUND  = fdata['BSE_Supernovae']["Unbound"][...].squeeze() 
                     # SN_KICK = fdata['BSE_Supernovae']['Applied_Kick_Magnitude(SN)'][...].squeeze()
                     SN_KICK = fdata['BSE_Supernovae']['ComponentSpeed(SN)'][...].squeeze()
+                    CP_KICK = fdata['BSE_Supernovae']['ComponentSpeed(CP)'][...].squeeze()
 
                     # Fix for selecting only ECSN that have undergone mass transfer as donors, and are thus H-poor
                     MT_DONOR_HIST = fdata['BSE_Supernovae']["MT_Donor_Hist(SN)"][...].squeeze()
@@ -47,13 +50,16 @@ def load_sim_data(bh_kicks=[200], ns_kicks=[300, 400, 700], sigmas = [0.1, 0.3, 
                      
                     # Select single NS with additional ECSN H-poor constraint
                     maskSN_NS = ((SN_STELLAR_TYPE ==13) * (MT_DONOR_mask) * (UNBOUND == 1)) 
-                    
+                    maskCP_NS = ((CP_STELLAR_TYPE ==13) * (MT_DONOR_mask) * (UNBOUND == 1))
                     
                 SN_KICK_NS = SN_KICK[maskSN_NS]  
+                CP_KICK_NS = CP_KICK[maskCP_NS] 
+                
+                PULSAR_VELOCITIES = np.concatenate([SN_KICK_NS, CP_KICK_NS])
 
                 fdata.close()
 
-                SN_KICK_NS_ALL.append(SN_KICK_NS)
+                SN_KICK_NS_ALL.append(PULSAR_VELOCITIES)
                 NS_KICK_MULT.append(ns_kick)
                 SIGMAS.append(sigma)
             
