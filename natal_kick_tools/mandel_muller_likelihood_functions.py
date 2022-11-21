@@ -27,7 +27,7 @@ def load_sim_data(bh_kicks=[200], ns_kicks=[300, 400, 700], sigmas = [0.1, 0.3, 
                     SN_TYPE = fdata['SSE_Supernovae'][f"SN_Type"][...].squeeze() 
                     
                     maskSN_NS = ((SN_STELLAR_TYPE ==13) * (SN_TYPE == 1)) # select NSs, Core Collapse SN                 
-               
+                    PULSAR_VELOCITIES = SN_KICK[maskSN_NS]
             
                 if mode == 'bse':
                     SN_STELLAR_TYPE = fdata['BSE_Supernovae']["Stellar_Type(SN)"][...].squeeze()
@@ -52,10 +52,10 @@ def load_sim_data(bh_kicks=[200], ns_kicks=[300, 400, 700], sigmas = [0.1, 0.3, 
                     maskSN_NS = ((SN_STELLAR_TYPE ==13) * (MT_DONOR_mask) * (UNBOUND == 1)) 
                     maskCP_NS = ((CP_STELLAR_TYPE ==13) * (MT_DONOR_mask) * (UNBOUND == 1))
                     
-                SN_KICK_NS = SN_KICK[maskSN_NS]  
-                CP_KICK_NS = CP_KICK[maskCP_NS] 
+                    SN_KICK_NS = SN_KICK[maskSN_NS]  
+                    CP_KICK_NS = CP_KICK[maskCP_NS] 
                 
-                PULSAR_VELOCITIES = np.concatenate([SN_KICK_NS, CP_KICK_NS])
+                    PULSAR_VELOCITIES = np.concatenate([SN_KICK_NS, CP_KICK_NS])
 
                 fdata.close()
 
